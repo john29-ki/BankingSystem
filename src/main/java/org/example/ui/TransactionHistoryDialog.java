@@ -1,10 +1,23 @@
-package org.example;
+package org.example.ui;
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Font;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableModel;
+
+import org.example.controllers.AccountController;
+import org.example.model.Account;
+import org.example.model.Transaction;
 
 /**
  * Transaction history dialog.
@@ -105,3 +118,4 @@ public class TransactionHistoryDialog extends JDialog {
         }
     }
 }
+

@@ -1,11 +1,13 @@
 package org.example;
 
+import org.example.model.Account;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Black-box tests for Account using Equivalence Partitioning.
@@ -18,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * - Amount vs Balance: amount <= balance (valid), amount > balance (invalid)
  */
 @DisplayName("Account - Equivalence Partitioning Tests")
-class AccountDepositTest {
+class AccountBlackBoxTest {
 
     private Account account;
 

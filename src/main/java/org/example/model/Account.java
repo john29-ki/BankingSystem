@@ -1,4 +1,4 @@
-package org.example;
+package org.example.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -237,3 +237,4 @@ public class Account {
         counter = 1000;
     }
 }
+

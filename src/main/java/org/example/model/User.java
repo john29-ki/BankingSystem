@@ -1,4 +1,4 @@
-package org.example;
+package org.example.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -174,3 +174,4 @@ public class User {
         idCounter = 1;
     }
 }
+

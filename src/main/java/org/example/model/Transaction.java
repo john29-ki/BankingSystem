@@ -1,4 +1,4 @@
-package org.example;
+package org.example.model;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -164,3 +164,4 @@ public class Transaction {
                 '}';
     }
 }
+

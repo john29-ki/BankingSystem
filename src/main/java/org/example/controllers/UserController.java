@@ -1,7 +1,10 @@
-package org.example;
+package org.example.controllers;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.example.model.Account;
+import org.example.model.User;
 
 /**
  * Controller for user management and session handling.
@@ -132,4 +135,26 @@ public class UserController {
     public Map<Integer, User> getAllUsers() {
         return new HashMap<>(userRegistry);
     }
+
+    /**
+     * Logs in a user with email and password.
+     *
+     * @param email    User's email address
+     * @param password User's password
+     * @return true if login successful, false otherwise
+     */
+    public boolean login(String email, String password) {
+        User user = userByEmail.get(email);
+        if (user == null) {
+            return false;
+        }
+        
+        if (!user.getPassword().equals(password)) {
+            return false;
+        }
+        
+        currentLoggedInUser = user;
+        return true;
+    }
 }
+

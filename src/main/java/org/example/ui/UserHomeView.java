@@ -1,8 +1,30 @@
-package org.example;
+package org.example.ui;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+
+import org.example.controllers.AccountController;
+import org.example.controllers.AdminController;
+import org.example.controllers.UserController;
+import org.example.model.Account;
+import org.example.model.User;
 
 /**
  * User home screen.
@@ -11,6 +33,7 @@ import java.util.List;
 public class UserHomeView extends JFrame {
     private final UserController userController;
     private final AccountController accountController;
+    private final AdminController adminController;
 
     private JLabel userNameLabel;
     private JComboBox<String> accountComboBox;
@@ -23,11 +46,21 @@ public class UserHomeView extends JFrame {
     private JButton viewTransactionsButton;
     private JButton createAccountButton;
     private JButton refreshButton;
+    private JButton registerNewUserButton;
+    private JButton logoutButton;
 
     public UserHomeView(UserController userController, AccountController accountController) {
         this.userController = userController;
         this.accountController = accountController;
+        this.adminController = null;
+        initializeUI();
+        loadUserData();
+    }
 
+    public UserHomeView(UserController userController, AccountController accountController, AdminController adminController) {
+        this.userController = userController;
+        this.accountController = accountController;
+        this.adminController = adminController;
         initializeUI();
         loadUserData();
     }
@@ -45,12 +78,20 @@ public class UserHomeView extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // Top panel - User info
-        JPanel topPanel = new JPanel();
-        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+        // Top panel - User info with logout button
+        JPanel topPanel = new JPanel(new BorderLayout());
+        JPanel userInfoPanel = new JPanel();
+        userInfoPanel.setLayout(new BoxLayout(userInfoPanel, BoxLayout.Y_AXIS));
         userNameLabel = new JLabel("Welcome, User");
         userNameLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        topPanel.add(userNameLabel);
+        userInfoPanel.add(userNameLabel);
+        topPanel.add(userInfoPanel, BorderLayout.CENTER);
+        
+        // Logout button
+        logoutButton = new JButton("Logout");
+        logoutButton.addActionListener(e -> handleLogout());
+        topPanel.add(logoutButton, BorderLayout.EAST);
+        
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
         // Center panel - Account details
@@ -82,7 +123,7 @@ public class UserHomeView extends JFrame {
         mainPanel.add(centerPanel, BorderLayout.CENTER);
 
         // Bottom panel - Action buttons
-        JPanel buttonPanel = new JPanel(new GridLayout(3, 2, 10, 10));
+        JPanel buttonPanel = new JPanel(new GridLayout(4, 2, 10, 10));
 
         depositButton = new JButton("Deposit");
         depositButton.addActionListener(e -> handleDeposit());
@@ -107,6 +148,10 @@ public class UserHomeView extends JFrame {
         refreshButton = new JButton("Refresh");
         refreshButton.addActionListener(e -> refreshAccountData());
         buttonPanel.add(refreshButton);
+
+        registerNewUserButton = new JButton("Register New User");
+        registerNewUserButton.addActionListener(e -> handleRegisterNewUser());
+        buttonPanel.add(registerNewUserButton);
 
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -281,7 +326,7 @@ public class UserHomeView extends JFrame {
             try {
                 int targetAccountNumber = Integer.parseInt(targetAccountField.getText());
                 double amount = Double.parseDouble(amountField.getText());
-
+                
                 boolean success = accountController.transfer(fromAccount.getAccountNumber(), targetAccountNumber, amount);
 
                 if (success) {
@@ -336,4 +381,29 @@ public class UserHomeView extends JFrame {
             JOptionPane.showMessageDialog(this, "Invalid amount.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    /**
+     * Handles register new user action.
+     * Opens a new RegistrationView window.
+     */
+    private void handleRegisterNewUser() {
+        SwingUtilities.invokeLater(() -> {
+            RegistrationView registrationView = new RegistrationView(userController, accountController);
+            registrationView.setVisible(true);
+        });
+    }
+
+    /**
+     * Handles logout action.
+     * Logs out the user and navigates back to sign-in page.
+     */
+    private void handleLogout() {
+        userController.logout();
+        SwingUtilities.invokeLater(() -> {
+            SignInView signInView = new SignInView(userController, accountController, adminController);
+            signInView.setVisible(true);
+            dispose(); // Close user home view
+        });
+    }
 }
+

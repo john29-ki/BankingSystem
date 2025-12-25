@@ -1,8 +1,12 @@
-package org.example;
+package org.example.controllers;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.example.model.Account;
+import org.example.model.Transaction;
+import org.example.model.User;
 
 /**
  * Controller for account operations.
@@ -75,8 +79,8 @@ public class AccountController {
     public boolean transfer(int fromAccountNumber, int toAccountNumber, double amount) {
         Account fromAccount = findAccount(fromAccountNumber);
         Account toAccount = findAccount(toAccountNumber);
-
-        if (fromAccount == null || toAccount == null) {
+        
+        if (fromAccount == null || toAccount == null) {           
             return false;
         }
 
@@ -118,3 +122,4 @@ public class AccountController {
         return new HashMap<>(accountRegistry);
     }
 }
+

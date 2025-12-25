@@ -1,10 +1,15 @@
 package org.example;
 
-import javax.swing.*;
+import javax.swing.SwingUtilities;
+
+import org.example.controllers.AccountController;
+import org.example.controllers.AdminController;
+import org.example.controllers.UserController;
+import org.example.ui.SignInView;
 
 /**
  * Main entry point for the Banking System application.
- * Initializes controllers and launches the GUI.
+ * Initializes controllers, loads dummy data, and launches the GUI.
  */
 public class Main {
     public static void main(String[] args) {
@@ -15,33 +20,12 @@ public class Main {
             AccountController accountController = new AccountController(userController);
             AdminController adminController = new AdminController(userController, accountController);
 
-            // Launch User Registration View
-            RegistrationView registrationView = new RegistrationView(userController, accountController);
-            registrationView.setVisible(true);
+            // Initialize dummy data
+            DummyDataInitializer.initializeDummyData(userController, accountController);
 
-            // Optional: Launch Admin View in separate window for testing
-            // Uncomment the lines below to open Admin Panel on startup
-            
-            AdminView adminView = new AdminView(adminController);
-            adminView.setVisible(true);
-
-        });
-    }
-
-    /**
-     * Alternative main method for launching Admin Panel directly.
-     * Use this for admin access without going through registration.
-     */
-    public static void launchAdminPanel(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            // Initialize controllers
-            UserController userController = new UserController();
-            AccountController accountController = new AccountController(userController);
-            AdminController adminController = new AdminController(userController, accountController);
-
-            // Launch Admin View
-            AdminView adminView = new AdminView(adminController);
-            adminView.setVisible(true);
+            // Launch Sign In View
+            SignInView signInView = new SignInView(userController, accountController, adminController);
+            signInView.setVisible(true);
         });
     }
 }

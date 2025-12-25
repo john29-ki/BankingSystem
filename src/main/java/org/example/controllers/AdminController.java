@@ -1,8 +1,12 @@
-package org.example;
+package org.example.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.example.model.Account;
+import org.example.model.Transaction;
+import org.example.model.User;
 
 /**
  * Controller for administrative operations.
@@ -50,8 +54,7 @@ public class AdminController {
         }
 
         try {
-            account.suspend();
-            return true;
+            return account.suspend();
         } catch (IllegalStateException e) {
             return false;
         }
@@ -70,8 +73,7 @@ public class AdminController {
         }
 
         try {
-            account.appeal();
-            return true;
+            return account.appeal();
         } catch (IllegalStateException e) {
             return false;
         }
@@ -89,8 +91,7 @@ public class AdminController {
             return false;
         }
 
-        account.close();
-        return true;
+        return account.close();
     }
 
     /**
@@ -209,3 +210,4 @@ public class AdminController {
         return accountController.getAllAccounts();
     }
 }
+

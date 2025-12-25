@@ -1,7 +1,25 @@
-package org.example;
+package org.example.ui;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+
+import org.example.controllers.AccountController;
+import org.example.controllers.AdminController;
+import org.example.controllers.UserController;
 
 /**
  * User registration screen.
@@ -10,17 +28,26 @@ import java.awt.*;
 public class RegistrationView extends JFrame {
     private final UserController userController;
     private final AccountController accountController;
+    private final AdminController adminController;
 
     private JTextField nameField;
     private JTextField emailField;
     private JPasswordField passwordField;
     private JTextField phoneField;
     private JButton registerButton;
+    private JButton signInButton;
 
     public RegistrationView(UserController userController, AccountController accountController) {
         this.userController = userController;
         this.accountController = accountController;
+        this.adminController = null; // Will be set if needed
+        initializeUI();
+    }
 
+    public RegistrationView(UserController userController, AccountController accountController, AdminController adminController) {
+        this.userController = userController;
+        this.accountController = accountController;
+        this.adminController = adminController;
         initializeUI();
     }
 
@@ -61,11 +88,19 @@ public class RegistrationView extends JFrame {
         mainPanel.add(createFieldPanel("Phone (optional):", phoneField = new JTextField(20)));
         mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
-        // Register button
+        // Button panel
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
+
         registerButton = new JButton("Register");
-        registerButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         registerButton.addActionListener(e -> handleRegistration());
-        mainPanel.add(registerButton);
+        buttonPanel.add(registerButton);
+
+        signInButton = new JButton("Sign In");
+        signInButton.addActionListener(e -> handleSignIn());
+        buttonPanel.add(signInButton);
+
+        mainPanel.add(buttonPanel);
 
         add(mainPanel);
     }
@@ -116,14 +151,26 @@ public class RegistrationView extends JFrame {
         boolean success = userController.registerUser(name, email, password, phone);
 
         if (success) {
+            // Get user ID before logout
+            int userId = userController.getCurrentUser().getUserId();
+            
+            // Logout the auto-logged in user
+            userController.logout();
+            
             // Show success message
             JOptionPane.showMessageDialog(this,
-                    "Registration successful! User ID: " + userController.getCurrentUser().getUserId(),
+                    "Registration successful! User ID: " + userId + "\nPlease sign in to continue.",
                     "Success",
                     JOptionPane.INFORMATION_MESSAGE);
 
-            // Open User Home View
-            openUserHomeView();
+            // Clear fields
+            nameField.setText("");
+            emailField.setText("");
+            passwordField.setText("");
+            phoneField.setText("");
+
+            // Navigate to sign-in
+            handleSignIn();
         } else {
             // Show error message
             JOptionPane.showMessageDialog(this,
@@ -134,13 +181,20 @@ public class RegistrationView extends JFrame {
     }
 
     /**
-     * Opens the User Home View and closes the registration window.
+     * Handles the sign-in button click.
+     * Opens the sign-in view.
      */
-    private void openUserHomeView() {
+    private void handleSignIn() {
         SwingUtilities.invokeLater(() -> {
-            UserHomeView userHomeView = new UserHomeView(userController, accountController);
-            userHomeView.setVisible(true);
+            // Create adminController if not already set
+            AdminController adminCtrl = adminController;
+            if (adminCtrl == null) {
+                adminCtrl = new AdminController(userController, accountController);
+            }
+            SignInView signInView = new SignInView(userController, accountController, adminCtrl);
+            signInView.setVisible(true);
             dispose(); // Close registration window
         });
     }
 }
+
